@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import Header from '../components/Header';
+import Loading from '../components/Loading';
+import searchAlbumsAPIs from '../services/searchAlbumsAPI';
+import Card from '../components/Card';
 
 class Search extends Component {
   constructor(props) {
@@ -7,6 +10,10 @@ class Search extends Component {
     this.state = {
       searchField: '',
       disabled: true,
+      loading: false,
+      data: [],
+      artist: '',
+      hasSearched: false,
     };
   }
 
@@ -17,8 +24,29 @@ class Search extends Component {
     this.setState({ searchField: value });
   };
 
+  searchAlbums = () => {
+    const { searchField } = this.state;
+    // Limpar campo
+    this.setState({ searchField: '' });
+    // Pesquisar album
+    // Mostrar carregando enquanto pesquisa
+    this.setState({ loading: true }, async () => {
+      const result = await searchAlbumsAPIs(searchField);
+      this.setState({
+        loading: false, data: result, artist: searchField, hasSearched: true });
+    });
+  }
+
+  showArtist = (artist) => (
+    <span>
+      Resultado de álbuns de:
+      {' '}
+      {artist}
+    </span>
+  );
+
   render() {
-    const { searchField, disabled } = this.state;
+    const { searchField, disabled, loading, data, artist, hasSearched } = this.state;
     return (
       <>
         <Header />
@@ -34,10 +62,29 @@ class Search extends Component {
               type="button"
               data-testid="search-artist-button"
               disabled={ disabled }
+              onClick={ this.searchAlbums }
             >
               Pesquisar
             </button>
           </form>
+        </div>
+        <div className="test">
+          {
+            artist !== '' ? this.showArtist(artist) : ''
+          }
+        </div>
+        <div>
+          {loading && <Loading />}
+          {
+            (data.length === 0) && hasSearched
+              ? <span>Nenhum álbum foi encontrado</span>
+              : data.map((item, index) => <Card { ...item } key={ index } />)
+          }
+          {/* {
+            loading && (data.length === 0)
+              ? <Loading />
+              : data.map((item, index) => <Card { ...item } key={ index } />)
+          } */}
         </div>
       </>
     );
