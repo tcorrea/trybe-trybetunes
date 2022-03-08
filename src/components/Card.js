@@ -21,7 +21,11 @@ class Card extends Component {
         <span>{artistName}</span>
         <Link
           data-testid={ `link-to-album-${collectionId}` }
-          to={ `/album/${collectionId}` }
+          // to={ `/album/${collectionId}` }
+          to={ {
+            pathname: `/album/${collectionId}`,
+            query: { ...this.props },
+          } }
         >
           Album
         </Link>
