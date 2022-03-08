@@ -27,12 +27,17 @@ class Login extends Component {
     const { name } = this.state;
     const { history } = this.props;
 
-    this.setState({ loading: true }, () => {
-      createUser({ name }).then(() => {
-        this.setState({ loading: false });
-        history.push('/search');
-      });
+    this.setState({ loading: true }, async () => {
+      const result = await createUser({ name });
+      if (result === 'OK') history.push('/search');
     });
+
+    // this.setState({ loading: true }, () => {
+    //   createUser({ name }).then(() => {
+    //     this.setState({ loading: false });
+    //     history.push('/search');
+    //   });
+    // });
   }
 
   render() {
@@ -65,7 +70,7 @@ class Login extends Component {
 }
 
 Login.propTypes = {
-  history: PropTypes.func.isRequired,
-};
+  history: PropTypes.objectOf,
+}.isRequired;
 
 export default Login;
