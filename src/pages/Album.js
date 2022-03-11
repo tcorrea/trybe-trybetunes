@@ -20,14 +20,10 @@ class Album extends Component {
 
   handleGetMusic = async () => {
     const { match } = this.props;
-    // const artistData = location.query;
-    // console.log(testData);
     const result = await getMusics(match.params.id);
-    // console.log(result);
+    console.log(result);
     const [artistData, ...rest] = result;
-    console.log(rest);
     this.setState({ data: rest, artistData });
-    // console.log(this.state);
   };
 
   render() {
