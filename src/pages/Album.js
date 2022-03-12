@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Header from '../components/Header';
 import getMusics from '../services/musicsAPI';
 import MusicCard from '../components/MusicCard';
+import { getFavoriteSongs, removeSong } from '../services/favoriteSongsAPI';
 
 class Album extends Component {
   constructor(props) {
@@ -10,24 +11,35 @@ class Album extends Component {
     this.state = {
       data: [],
       artistData: {},
+      favoriteSongs: [],
       // loading: false,
     };
   }
 
   componentDidMount() {
     this.handleGetMusic();
+    // this.handleFavoriteSong();
   }
 
   handleGetMusic = async () => {
     const { match } = this.props;
     const result = await getMusics(match.params.id);
-    console.log(result);
+    const resultFav = await getFavoriteSongs();
     const [artistData, ...rest] = result;
-    this.setState({ data: rest, artistData });
+    resultFav.map((item) => removeSong(item));
+
+    this.setState({ data: rest, artistData, favoriteSongs: resultFav });
   };
 
+  // handleFavoriteSong = async () => {
+  //   const result = await getFavoriteSongs();
+  //   // remove todas as musicas favoritas
+  //   result.map((item) => removeSong(item));
+  //   this.setState({ favoriteSongs: [...result] });
+  // }
+
   render() {
-    const { data, artistData } = this.state;
+    const { data, artistData, favoriteSongs } = this.state;
     const { artistName, collectionName } = artistData;
     return (
       <>
@@ -43,7 +55,13 @@ class Album extends Component {
             {collectionName}
             {artistName}
           </span>
-          {data.map((item, index) => <MusicCard { ...item } key={ index } />)}
+          {data.map(
+            (item, index) => (<MusicCard
+              { ...item }
+              key={ index }
+              fav={ favoriteSongs }
+            />),
+          )}
 
         </div>
       </>

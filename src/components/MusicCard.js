@@ -13,42 +13,34 @@ class MusicCard extends Component {
     };
   }
 
+  componentDidMount() {
+    this.handleCheckedSong();
+  }
+
   handleFavoriteSong = () => {
     const { props } = this;
     const songData = {
-      amgArtistId: props.amgArtistId,
-      artistId: props.artistId,
-      artistName: props.artistName,
-      artistViewUrl: props.artistViewUrl,
-      artworkUrl60: props.artworkUrl60,
-      artworkUrl100: props.artworkUrl100,
-      collectionCensoredName: props.collectionCensoredName,
-      collectionExplicitness: props.collectionExplicitness,
-      collectionId: props.collectionId,
-      collectionName: props.collectionName,
-      collectionPrice: props.collectionPrice,
-      collectionType: props.collectionType,
-      collectionViewUrl: props.collectionViewUrl,
-      contentAdvisoryRating: props.contentAdvisoryRating,
-      copyright: props.copyright,
-      country: props.country,
-      currency: props.currency,
-      primaryGenreName: props.primaryGenreName,
-      releaseDate: props.releaseDate,
-      trackCount: props.trackCount,
-      wrapperType: props.wrapperType,
+      trackId: props.trackId,
+      trackName: props.trackName,
     };
 
     this.setState({ loading: true }, async () => {
       const result = await addSong(songData);
-      this.setState({ loading: false, checked: result === 'OK' });
+      if (result === 'OK') this.setState({ loading: false });// , checked: result === 'OK' });
     });
   };
 
-  handleCheckedSong = () => {
+  handleCheckedChange = () => {
     this.setState((prev) => ({
       checked: !prev.checked,
     }));
+  }
+
+  handleCheckedSong = () => {
+    const { fav, trackId } = this.props;
+    if (fav.some((item) => item.trackId === trackId)) {
+      this.setState({ checked: true });
+    }
   }
 
   trackComponent = () => {
@@ -66,7 +58,7 @@ class MusicCard extends Component {
             id="favorite"
             data-testid={ `checkbox-music-${trackId}` }
             onClick={ this.handleFavoriteSong }
-            onChange={ this.handleCheckedSong }
+            onChange={ this.handleCheckedChange }
             checked={ checked }
           />
         </label>

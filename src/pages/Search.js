@@ -26,6 +26,7 @@ class Search extends Component {
 
   searchAlbums = () => {
     const { searchField } = this.state;
+    console.log(searchField);
     // Limpar campo
     this.setState({ searchField: '' });
     // Pesquisar album
